@@ -1,4 +1,4 @@
-player = { life = 3, damages = 1}
+player = { baseLife = 3, life, damages = 1}
 
 local cellX, cellY
 local spriteId = 125
@@ -10,6 +10,8 @@ end
 function player.play(x, y)
 	cellX = x
 	cellY = y
+	
+	player.life = player.baseLife
 end
 
 function player.stop()

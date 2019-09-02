@@ -2,6 +2,7 @@ dungeon = require 'src/dungeon'
 player = require 'src/player'
 enemies = require 'src/enemies'
 fight = require 'src/fight'
+hud = require 'src/affichagetetehaute'
 
 game = {}
 
@@ -44,8 +45,9 @@ end
 
 function game.draw()
 	dungeon.draw()
-	enemies.draw()
 	player.draw()
+	enemies.draw() -- after player to draw life on top of player
+	hud.draw()
 	
 	if (isInFight == true) then	
 		fight.draw()
