@@ -23,7 +23,9 @@ function game.stop()
 end
 
 function game.update(dt)
-
+	if (isInFight == true) then	
+		fight.update(dt)
+	end
 end
 
 function game.launchFight(playerX, playerY, enemyX, enemyY)

@@ -7,6 +7,9 @@ local width, height = 25, 19
 local spriteSize = 33 -- 16*16 scaled by 2
 local grid = {}
 
+local roomWidth, roomHeight = 14, 13
+local roomStartWidth, roomStartHeight = 5, 3
+
 function dungeon.initialize()
 	currentStage = 1
 	local windowSize, windowHeight = love.graphics.getDimensions()
@@ -43,8 +46,8 @@ function dungeon.generateRoom(nEnemies)
 	end
 	
 	local emptyList = {}
-	for i = 1, height do
-		for j = 1, width do
+	for i = roomStartHeight, roomHeight do
+		for j = roomStartWidth, roomWidth do
 			if (grid[i][j] ~= nil) then
 				table.insert(emptyList, {x = i, y = j})
 			end
@@ -97,7 +100,7 @@ function dungeon.draw()
 	for i = 1, height do
 		for j = 1, width do
 			if (grid[i][j] ~= nil) then
-				spritemanager.draw(grid[i][j].cellSprite, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
+				spritemanager.draw(grid[i][j].cellSprite, 1, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--love.graphics.print(i * width + j, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--love.graphics.print(i .. "," .. j, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--if (grid[i][j].empty == true)then

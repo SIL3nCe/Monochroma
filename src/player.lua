@@ -21,7 +21,7 @@ function player.update(dt)
 end
 
 function player.draw()
-	spritemanager.draw(spriteId, dungeon.getCellCoord(cellX, cellY))
+	spritemanager.draw(spriteId, 1, dungeon.getCellCoord(cellX, cellY))
 end
 
 function player.takeDamages(damages)
