@@ -7,7 +7,7 @@ local width, height = 25, 19
 local spriteSize = 33 -- 16*16 scaled by 2
 local grid = {}
 
-local roomWidth, roomHeight = 14, 13
+local roomWidth, roomHeight = 15, 13
 local roomStartWidth, roomStartHeight = 5, 3
 
 function dungeon.initialize()
@@ -23,7 +23,9 @@ function dungeon.initialize()
 end
 
 function dungeon.stop()
-	grid = nil
+	for i in pairs(grid) do
+		grid[i] = nil
+	end
 end
 
 function dungeon.generateRoom(nEnemies)
@@ -45,10 +47,28 @@ function dungeon.generateRoom(nEnemies)
 		table.insert(grid, rowTable)
 	end
 	
+	-- Generate walls - todo pcg rooms
+	for i = roomStartHeight, roomStartHeight + roomHeight do
+		if (i == roomStartHeight or i == roomStartHeight + roomHeight) then
+			for j = roomStartWidth, roomStartWidth + roomWidth do
+				grid[i][j].empty = false
+				grid[i][j].block = true
+				grid[i][j].cellSprite = 102
+			end
+		else
+			grid[i][roomStartWidth].empty = false
+			grid[i][roomStartWidth].block = true
+			grid[i][roomStartWidth].cellSprite = 102
+			grid[i][roomStartWidth + roomWidth].empty = false
+			grid[i][roomStartWidth + roomWidth].block = true
+			grid[i][roomStartWidth + roomWidth].cellSprite = 102
+		end
+	end
+	
 	local emptyList = {}
-	for i = roomStartHeight, roomHeight do
-		for j = roomStartWidth, roomWidth do
-			if (grid[i][j] ~= nil) then
+	for i = roomStartHeight, roomStartHeight + roomHeight do
+		for j = roomStartWidth, roomStartWidth + roomWidth do
+			if (grid[i][j] ~= nil and grid[i][j].empty == true) then
 				table.insert(emptyList, {x = i, y = j})
 			end
 		end

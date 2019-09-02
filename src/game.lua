@@ -55,16 +55,21 @@ function game.draw()
 end
 
 function game.keypressed(key)
+	if (key == "f1") then -- restart
+		game.stop()
+		game.play()
+	end
+	
 	if (isInFight == true) then
 		fight.keypressed(key)
 	else
-		if key == "up" then
+		if (key == "up") then
 			player.move(-1, 0)
-		elseif key == "down" then
+		elseif (key == "down") then
 			player.move(1, 0)
-		elseif key == "left" then
+		elseif (key == "left") then
 			player.move(0, -1)
-		elseif key == "right" then
+		elseif (key == "right") then
 			player.move(0, 1)
 		end
 	end

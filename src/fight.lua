@@ -49,23 +49,6 @@ local function drawCard()
 	return card
 end
 
-local function computeScore(cardList)
-	local asCard =  false
-	cardList.score = 0
-	for i,card in ipairs(cardList) do
-		if (card.hidden == false) then
-			cardList.score = cardList.score + card.value
-			if (card.value == 1) then
-				asCard = true
-			end
-		end
-	end
-	
-	if (asCard == true and cardList.score + 10 <= 21) then
-		cardList.score = cardList.score + 10
-	end
-end
-
 function fight.play(cellX, cellY, enemyX, enemyY)
 	enemyId = enemies.getEnemyIdFromCoord(enemyX, enemyY)
 	for i,card in ipairs(cards) do
@@ -99,6 +82,23 @@ function fight.play(cellX, cellY, enemyX, enemyY)
 		enemyCards.startX = enemyX
 		enemyCards.startY = enemyY - 1
 		enemyCards.direction = -1
+	end
+end
+
+local function computeScore(cardList)
+	local asCard =  false
+	cardList.score = 0
+	for i,card in ipairs(cardList) do
+		if (card.hidden == false) then
+			cardList.score = cardList.score + card.value
+			if (card.value == 1) then
+				asCard = true
+			end
+		end
+	end
+	
+	if (asCard == true and cardList.score + 10 <= 21) then
+		cardList.score = cardList.score + 10
 	end
 end
 
