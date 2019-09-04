@@ -8,7 +8,7 @@ function enemies.stop()
 	end
 end
 
-function enemies.createEnemy(x, y)
+function enemies.createEnemy(x, y, loot, key)
 	enemy = 
 	{
 		cellX = x,
@@ -16,7 +16,10 @@ function enemies.createEnemy(x, y)
 		spriteId = 32,
 		
 		damages = 1,
-		life = 1
+		life = 1,
+		
+		lootValue = loot,
+		hasKey = key
 	}
 	
 	table.insert(enemyList, enemy)
@@ -32,7 +35,7 @@ function enemies.takeDamages(enemyId, damages)
 	enemyList[enemyId].life = enemyList[enemyId].life - damages
 	
 	if (enemyList[enemyId].life <= 0) then
-		dungeon.onEnemyMoved(enemyList[enemyId].cellX, enemyList[enemyId].cellY, -1, -1)
+		dungeon.onEnemyDied(enemyList[enemyId].cellX, enemyList[enemyId].cellY, enemyList[enemyId].lootValue, enemyList[enemyId].hasKey)
 		table.remove(enemyList, enemyId)
 	end
 end
@@ -62,7 +65,7 @@ function enemies.move()
 			table.insert(direction, { x = 0, y = -1 })
 		end
 		
-		rand = love.math.random(1,  #direction)
+		rand = love.math.random(1, #direction)
 		
 		newCellX = enemy.cellX + direction[rand].x
 		newCellY = enemy.cellY + direction[rand].y

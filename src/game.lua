@@ -7,6 +7,7 @@ hud = require 'src/affichagetetehaute'
 game = {}
 
 local isInFight = false
+local roomId = 0
 
 function game.initialize()
 	dungeon.initialize()
@@ -14,7 +15,8 @@ function game.initialize()
 end
 
 function game.play()
-	dungeon.generateRoom(3)
+	roomId = 0
+	dungeon.generateRoom(roomId, 3)
 end
 
 function game.stop()
@@ -54,10 +56,17 @@ function game.draw()
 	end
 end
 
+function game.launchNextRoom()
+	game.stop()
+	roomId = roomId + 1
+	-- if 10, last level (boss?)
+	-- if 11, leave dungeon
+	game.play()
+end
+
 function game.keypressed(key)
 	if (key == "f1") then -- restart
-		game.stop()
-		game.play()
+		launchNextRoom()
 	end
 	
 	if (isInFight == true) then

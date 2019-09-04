@@ -8,7 +8,9 @@ local spriteSize = 33 -- 16*16 scaled by 2
 local grid = {}
 
 local roomWidth, roomHeight = 15, 13
-local roomStartWidth, roomStartHeight = 5, 3
+local roomStartWidth, roomStartHeight = 5, 4
+
+local lootSpriteId, keySpriteId = 842, 755
 
 function dungeon.initialize()
 	currentStage = 1
@@ -28,18 +30,21 @@ function dungeon.stop()
 	end
 end
 
-function dungeon.generateRoom(nEnemies)
+function dungeon.generateRoom(roomId, nEnemies)
 	for i = 0, height - 1 do
 		local rowTable = {}
 		for j = 0, width - 1 do
 			newCell = 
 			{
 				cellSprite = 1,
+				baseCellSprite = 1,
 				empty = true,
 				block = false,
 				enemy = false,
+				loot = false,
+				key = false,
 				player = false,
-				stair = false,
+				roomExit = false,
 				vault = false
 			}
 			table.insert(rowTable, newCell)
@@ -81,11 +86,18 @@ function dungeon.generateRoom(nEnemies)
 	grid[emptyList[randId].x][emptyList[randId].y].player = true
 	table.remove(emptyList, randId)
 		
+	-- Exit
+	randId = love.math.random(1, #emptyList)
+	grid[emptyList[randId].x][emptyList[randId].y].empty = false
+	grid[emptyList[randId].x][emptyList[randId].y].roomExit = true
+	grid[emptyList[randId].x][emptyList[randId].y].cellSprite = 196
+	table.remove(emptyList, randId)
 	
 	-- Enemies spawn
 	for i = 1, nEnemies do
 		randId = love.math.random(1, #emptyList)
-		enemies.createEnemy(emptyList[randId].x, emptyList[randId].y)
+		lootVal = i == 1 and 50 or love.math.random(10, 20)
+		enemies.createEnemy(emptyList[randId].x, emptyList[randId].y, lootVal, i == 1)
 		
 		grid[emptyList[randId].x][emptyList[randId].y].empty = false
 		grid[emptyList[randId].x][emptyList[randId].y].enemy = true
@@ -114,6 +126,19 @@ function dungeon.onEnemyMoved(oldX, oldY, newX, newY)
 		grid[newX][newY].enemy = true
 		grid[newX][newY].empty = false
 	end
+end
+function dungeon.onEnemyDied(x, y, loot, key)
+	strDebug = loot .. " " .. tostring(key)
+	if (key == true) then
+		grid[x][y].enemy = false
+		grid[x][y].key = true
+		grid[x][y].cellSprite = keySpriteId
+	else
+		grid[x][y].enemy = false
+		grid[x][y].loot = true
+		grid[x][y].cellSprite = lootSpriteId
+	end
+	grid[x][y].value = loot
 end
 
 function dungeon.draw()
