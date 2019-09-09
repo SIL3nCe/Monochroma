@@ -25,7 +25,7 @@ function player.update(dt)
 end
 
 function player.draw()
-	spritemanager.draw(spriteId, 1, dungeon.getCellCoord(cellX, cellY))
+	spritemanager.draw(spriteId, true, 1, dungeon.getCellCoord(cellX, cellY))
 end
 
 function player.takeDamages(damages)
@@ -61,7 +61,7 @@ function player.move(x, y)
 			dungeon.onPlayerMoved(cellX, cellY, newCellX, newCellY)
 			cellX = newCellX
 			cellY = newCellY
-			--enemies.move()
+			enemies.move()
 		elseif(cellState.enemy == true) then
 			game.launchFight(cellX, cellY, newCellX, newCellY)
 		elseif (cellState.roomExit == true and player.foundKey == true) then

@@ -10,6 +10,7 @@ local goldX, goldY = heartX + 2, heartY + 1
 local keySprite = 755
 local keyX, keyY = goldX + 2, goldY
 
+local dungeonInfoX, dungeonInfoY = heartX, heartY + 15
 
 function hud.initialize()
 
@@ -24,15 +25,19 @@ end
 function hud.draw()	
 	for i = 1, player.baseLife do
 		local sprite = player.life >= i and heartFull or heartEmpty
-		spriteManager.draw(sprite, 1, dungeon.getCellCoord(heartX, heartY + i))
+		spriteManager.draw(sprite, true, 1, dungeon.getCellCoord(heartX, heartY + i))
 	end
 	
-	spriteManager.draw(goldSprite, 1, dungeon.getCellCoord(goldX, goldY))
+	spriteManager.draw(goldSprite, true, 1, dungeon.getCellCoord(goldX, goldY))
     love.graphics.print(player.golds, dungeon.getCellCoord(goldX, goldY + 1))
 	
 	if (player.foundKey == true) then
-		spriteManager.draw(keySprite, 1, dungeon.getCellCoord(keyX, keyY))
+		spriteManager.draw(keySprite, true, 1, dungeon.getCellCoord(keyX, keyY))
 	end
+	
+	love.graphics.print(dungeon.dungeonName, dungeon.getCellCoord(dungeonInfoX, dungeonInfoY))
+    love.graphics.print(": " .. dungeon.roomId, dungeon.getCellCoord(dungeonInfoX, dungeonInfoY + 3))
+
 end
 
 return hud

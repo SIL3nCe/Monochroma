@@ -1,10 +1,11 @@
 spriteManager = {}
 
-local spriteSheet
+local spriteSheet, spriteSheetColored
 local quadList = {}
 
 function spriteManager.initialize()
-	spriteSheet = love.graphics.newImage("resources/colored.png")
+	spriteSheet = love.graphics.newImage("resources/monochrome.png")
+	spriteSheetColored = love.graphics.newImage("resources/colored.png")
 	nSprite = 32 -- 32 * 32 sprites
 	spriteSize = 16
 	
@@ -15,12 +16,14 @@ function spriteManager.initialize()
 	end
 end
 
-function spriteManager.draw(spriteId, alpha, x, y)
+function spriteManager.draw(spriteId, bColored, alpha, x, y)
 	assert(spriteId ~= nil, "spriteManager.draw : invalid spriteId")
 	assert(spriteId > 0 and spriteId < 1025, "spriteManager.draw : " .. spriteId .. " is not a valid sprite id")
 	
 	love.graphics.setColor( 255, 255, 255, alpha)
-	love.graphics.draw(spriteSheet, quadList[spriteId], x, y, 0 , 2, 2)
+	
+	love.graphics.draw(bColored == true and spriteSheetColored or spriteSheet, quadList[spriteId], x, y, 0 , 2, 2)
+
 	love.graphics.setColor( 255, 255, 255, 1 )
 end
 

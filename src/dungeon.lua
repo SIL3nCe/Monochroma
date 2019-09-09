@@ -1,10 +1,10 @@
-dungeon = { maxRowCell, maxColumnCell }
+dungeon = { maxRowCell, maxColumnCell, dungeonName, roomId }
 
 local currentStage
 
 local widthOffset, heightOffset
 local width, height = 25, 19
-local spriteSize = 33 -- 16*16 scaled by 2
+local spriteSize = 32 -- 16*16 scaled by 2
 local grid = {}
 
 local roomWidth, roomHeight = 15, 13
@@ -24,13 +24,18 @@ function dungeon.initialize()
 	dungeon.maxColumnCell = height
 end
 
+function dungeon.play()
+	dungeon.dungeonName = "dungeonname"
+	dungeon.roomId = 0
+end
+
 function dungeon.stop()
 	for i in pairs(grid) do
 		grid[i] = nil
 	end
 end
 
-function dungeon.generateRoom(roomId, nEnemies)
+function dungeon.generateRoom(nEnemies)
 	for i = 0, height - 1 do
 		local rowTable = {}
 		for j = 0, width - 1 do
@@ -38,6 +43,8 @@ function dungeon.generateRoom(roomId, nEnemies)
 			{
 				cellSprite = 1,
 				baseCellSprite = 1,
+				value = 0,
+				colored = false,
 				empty = true,
 				block = false,
 				enemy = false,
@@ -113,6 +120,7 @@ end
 function dungeon.onPlayerMoved(oldX, oldY, newX, newY)
 	grid[oldX][oldY].player = false
 	grid[oldX][oldY].empty = true
+	grid[oldX][oldY].colored = true
 	
 	grid[newX][newY].player = true
 	grid[newX][newY].empty = false
@@ -121,12 +129,12 @@ end
 function dungeon.onEnemyMoved(oldX, oldY, newX, newY)
 	grid[oldX][oldY].enemy = false
 	grid[oldX][oldY].empty = true
+	grid[oldX][oldY].colored = false
 	
-	if (newX ~= -1 and newY ~= -1) then
-		grid[newX][newY].enemy = true
-		grid[newX][newY].empty = false
-	end
+	grid[newX][newY].enemy = true
+	grid[newX][newY].empty = false
 end
+
 function dungeon.onEnemyDied(x, y, loot, key)
 	strDebug = loot .. " " .. tostring(key)
 	if (key == true) then
@@ -139,13 +147,25 @@ function dungeon.onEnemyDied(x, y, loot, key)
 		grid[x][y].cellSprite = lootSpriteId
 	end
 	grid[x][y].value = loot
+	grid[x][y].colored = true
+	
+	for height = -2, 2 do
+		for width = -2, 2 do
+			local randId = love.math.random(0, 100)
+			local chance = (height > -2 and height < 2 and width > -2 and width < 2) and 100 or 50
+			if (randId <= chance) then
+				grid[x + height][y + width].colored = true
+			end
+		end
+	end
 end
 
 function dungeon.draw()
 	for i = 1, height do
 		for j = 1, width do
 			if (grid[i][j] ~= nil) then
-				spritemanager.draw(grid[i][j].cellSprite, 1, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
+				spritemanager.draw(grid[i][j].cellSprite, grid[i][j].colored, 1, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
+				--love.graphics.print(grid[i][j].value, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--love.graphics.print(i * width + j, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--love.graphics.print(i .. "," .. j, widthOffset + j * spriteSize, heightOffset + i * spriteSize)
 				--if (grid[i][j].empty == true)then

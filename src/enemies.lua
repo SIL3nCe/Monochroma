@@ -90,7 +90,7 @@ end
 
 function enemies.draw()
 	for i, enemy in ipairs(enemyList) do
-		spritemanager.draw(enemy.spriteId, 1, dungeon.getCellCoord(enemy.cellX, enemy.cellY))
+		spritemanager.draw(enemy.spriteId, false, 1, dungeon.getCellCoord(enemy.cellX, enemy.cellY))
 	end
 end
 

@@ -150,9 +150,9 @@ end
 function fight.draw()
 	--for i,card in ipairs(tempCards) do
 	--	if (card.hidden == true) then
-	--		spriteManager.draw(cardBack, 1, 50 + (i - (math.floor(i / 13) * 13)) * 32, 50 + 32 * (math.floor(i / 13)))
+	--		spriteManager.draw(cardBack, true, 1, 50 + (i - (math.floor(i / 13) * 13)) * 32, 50 + 32 * (math.floor(i / 13)))
 	--	else
-	--		spriteManager.draw(card.spriteId, 1, 50 + (i - (math.floor(i / 13) * 13)) * 32, 50 + 32 * (math.floor(i / 13)))
+	--		spriteManager.draw(card.spriteId, true, 1, 50 + (i - (math.floor(i / 13) * 13)) * 32, 50 + 32 * (math.floor(i / 13)))
 	--	end
 	--end
 	--for i,card in ipairs(cards) do
@@ -161,7 +161,7 @@ function fight.draw()
 	
 	playerY = playerCards.startY
 	for i,card in ipairs(playerCards) do
-		spriteManager.draw(card.spriteId, card.alpha, dungeon.getCellCoord(playerCards.startX, playerY))
+		spriteManager.draw(card.spriteId, true, card.alpha, dungeon.getCellCoord(playerCards.startX, playerY))
 		playerY = playerY + playerCards.direction
 	end
 	if (#playerCards ~= 0) then
@@ -171,9 +171,9 @@ function fight.draw()
 	enemyY = enemyCards.startY
 	for i,card in ipairs(enemyCards) do
 		if (card.hidden == true) then
-			spriteManager.draw(cardBack, card.alpha, dungeon.getCellCoord(enemyCards.startX, enemyY))
+			spriteManager.draw(cardBack, false, card.alpha, dungeon.getCellCoord(enemyCards.startX, enemyY))
 		else
-			spriteManager.draw(card.spriteId, card.alpha, dungeon.getCellCoord(enemyCards.startX, enemyY))
+			spriteManager.draw(card.spriteId, false, card.alpha, dungeon.getCellCoord(enemyCards.startX, enemyY))
 		end
 		enemyY = enemyY + enemyCards.direction
 	end
