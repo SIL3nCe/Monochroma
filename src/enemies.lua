@@ -14,12 +14,18 @@ function enemies.createEnemy(x, y, loot, key)
 		cellX = x,
 		cellY = y,
 		spriteId = 32,
+		spriteAlpha = 1,
 		
 		damages = 1,
 		life = 1,
 		
 		lootValue = loot,
-		hasKey = key
+		hasKey = key,
+		
+		damageBlink = 0,
+		damageCpt =	0.0,
+		nextDamageToTake = 0,
+		blinkSpeedFactor = 1.4 -- 1.4 for damage, 1.05 for death
 	}
 	
 	table.insert(enemyList, enemy)
@@ -30,14 +36,16 @@ function enemies.takeDamages(enemyId, damages)
 		return
 	end
 	
-	stdDebug = "enemy take damage " .. damages
-
-	enemyList[enemyId].life = enemyList[enemyId].life - damages
+	enemyList[enemyId].blinkSpeedFactor = enemyList[enemyId].life - damages <= 0 and 1.05 or 1.4
 	
-	if (enemyList[enemyId].life <= 0) then
+	if enemyList[enemyId].blinkSpeedFactor ~= 1.4 then -- spawn loot before fading
 		dungeon.onEnemyDied(enemyList[enemyId].cellX, enemyList[enemyId].cellY, enemyList[enemyId].lootValue, enemyList[enemyId].hasKey)
-		table.remove(enemyList, enemyId)
 	end
+	
+	enemyList[enemyId].nextDamageToTake = damages
+	enemyList[enemyId].damageBlink = 2
+	enemyList[enemyId].damageCpt = 0
+	
 end
 
 function enemies.move()
@@ -70,8 +78,6 @@ function enemies.move()
 		newCellX = enemy.cellX + direction[rand].x
 		newCellY = enemy.cellY + direction[rand].y
 		
-		--todo rand move nothing,l,r,u,d
-		
 		if (newCellX >= 1 and newCellX <= dungeon.maxRowCell and newCellY >= 1 and newCellY <= dungeon.maxColumnCell) then
 			cellState = dungeon.getCellContent(newCellX, newCellY)
 
@@ -85,12 +91,38 @@ function enemies.move()
 end
 
 function enemies.update(dt)
-
+	for i, enemy in ipairs(enemyList) do
+		-- damage/death anim
+		if enemy.damageBlink > 0 then
+			enemy.damageCpt = (enemy.damageCpt + dt) * enemy.blinkSpeedFactor
+			enemy.spriteAlpha = math.cos(enemy.damageCpt)
+			
+			if enemy.blinkSpeedFactor ~= 1.4 then -- means death
+				if enemy.spriteAlpha <= 0 then
+					game.endFight()
+					table.remove(enemyList, i)
+					return
+				end
+			end
+			
+			if enemy.damageCpt >= math.pi * 2 then
+				enemy.damageBlink = enemy.damageBlink - 1
+				enemy.damageCpt = 0
+				
+				if enemy.damageBlink == 0 then
+					enemy.spriteAlpha = 1
+					enemy.life = enemy.life - enemy.nextDamageToTake
+					enemy.nextDamageToTake = 0
+					game.endFight()
+				end
+			end
+		end
+	end
 end
 
 function enemies.draw()
 	for i, enemy in ipairs(enemyList) do
-		spritemanager.draw(enemy.spriteId, false, 1, dungeon.getCellCoord(enemy.cellX, enemy.cellY))
+		spritemanager.draw(enemy.spriteId, false, enemy.spriteAlpha, dungeon.getCellCoord(enemy.cellX, enemy.cellY))
 	end
 end
 

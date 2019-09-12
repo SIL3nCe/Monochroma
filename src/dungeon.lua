@@ -124,6 +124,7 @@ function dungeon.onPlayerMoved(oldX, oldY, newX, newY)
 	
 	grid[newX][newY].player = true
 	grid[newX][newY].empty = false
+	grid[newX][newY].colored = true
 end
 
 function dungeon.onEnemyMoved(oldX, oldY, newX, newY)
@@ -133,6 +134,7 @@ function dungeon.onEnemyMoved(oldX, oldY, newX, newY)
 	
 	grid[newX][newY].enemy = true
 	grid[newX][newY].empty = false
+	grid[newX][newY].colored = false
 end
 
 function dungeon.onEnemyDied(x, y, loot, key)

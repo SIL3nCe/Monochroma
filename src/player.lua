@@ -3,6 +3,12 @@ player = { baseLife = 3, life, damages = 1, golds = 0, foundKey} -- todo central
 local cellX, cellY
 local spriteId = 125
 
+playerSpriteAlpha = 1
+
+local damageBlink, damageCpt = 0, 0.0
+local nextDamageToTake = 0
+local blinkSpeedFactor = 1.4 -- 1.4 for damage, 1.1 for death
+
 function player.initialize()
 	fight.initialize()
 end
@@ -13,6 +19,11 @@ function player.play(x, y)
 	
 	player.life = player.baseLife
 	
+	damageBlink = 0
+	damageCpt = 0.0
+	
+	playerSpriteAlpha = 1
+	
 	player.foundKey = false
 end
 
@@ -21,16 +32,42 @@ function player.stop()
 end
 
 function player.update(dt)
-
+	-- damage/death anim
+	if damageBlink > 0 then
+		damageCpt = (damageCpt + dt) * blinkSpeedFactor
+		playerSpriteAlpha = math.cos(damageCpt)
+		
+		if blinkSpeedFactor == 1.1 then -- means death
+			if playerSpriteAlpha <= 0 then
+				game.endFight()
+				game.launchNextRoom() -- TODO leave dungeon instead
+				return
+			end
+		end
+		
+		if damageCpt >= math.pi * 2 then
+			damageBlink = damageBlink - 1
+			damageCpt = 0
+			
+			if damageBlink == 0 then
+				playerSpriteAlpha = 1
+				player.life = player.life - nextDamageToTake
+				nextDamageToTake = 0
+				game.endFight()
+			end
+		end
+	end
 end
 
 function player.draw()
-	spritemanager.draw(spriteId, true, 1, dungeon.getCellCoord(cellX, cellY))
+	spritemanager.draw(spriteId, true, playerSpriteAlpha, dungeon.getCellCoord(cellX, cellY))
 end
 
 function player.takeDamages(damages)
-	stdDebug = "player take damage " .. damages
-	player.life = player.life - damages
+	blinkSpeedFactor = player.life - damages <= 0 and 1.1 or 1.4
+	nextDamageToTake = damages
+	damageBlink = 3
+	damageCpt = 0
 end
 
 function player.move(x, y)

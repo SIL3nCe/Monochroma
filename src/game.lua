@@ -25,6 +25,8 @@ function game.stop()
 end
 
 function game.update(dt)
+	player.update(dt)
+	enemies.update(dt)
 	if (isInFight == true) then	
 		fight.update(dt)
 	end
@@ -36,10 +38,6 @@ function game.launchFight(playerX, playerY, enemyX, enemyY)
 end
 
 function game.endFight()
-	if (player.life <= 0) then
-		-- gameover
-	end
-	
 	fight.stop()
 	isInFight = false
 end
@@ -58,6 +56,7 @@ end
 function game.launchNextRoom()
 	game.stop()
 	dungeon.roomId = dungeon.roomId + 1
+	-- if 1 merchant/storekeeper/shopkeeper ?
 	-- if 10, last level (boss?)
 	-- if 11, leave dungeon
 	dungeon.generateRoom(3)

@@ -12,6 +12,8 @@ local enemyId
 local cardAnimation = false
 local playerDraw, enemyDraw = false, false
 
+local bFightEnded = false -- wait during damages animations
+
 function fight.initialize()
 	startLoc = 531
 	local cardValue
@@ -50,6 +52,8 @@ local function drawCard()
 end
 
 function fight.play(cellX, cellY, enemyX, enemyY)
+	bFightEnded = false
+	
 	enemyId = enemies.getEnemyIdFromCoord(enemyX, enemyY)
 	for i,card in ipairs(cards) do
 		table.insert(tempCards, copieTable(card))
@@ -103,6 +107,8 @@ local function computeScore(cardList)
 end
 
 function fight.update(dt)
+	if bFightEnded then return end
+	
 	cardAnimation = false
 	for i,card in ipairs(playerCards) do
 		if (card.alpha < 1) then
@@ -116,7 +122,7 @@ function fight.update(dt)
 		if (playerDraw == true) then
 			if (playerCards.score > 21) then 
 				player.takeDamages(enemies.getEnemyDamages(enemyId))
-				game.endFight()
+				bFightEnded = true
 			end
 			playerDraw = false
 		end
@@ -134,10 +140,10 @@ function fight.update(dt)
 		if (enemyDraw == true) then
 			if (enemyCards.score > 21) then
 				enemies.takeDamages(enemyId, player.damages)
-				game.endFight()
+				bFightEnded = true
 			elseif (playerCards.score < enemyCards.score) then
 				player.takeDamages(enemies.getEnemyDamages(enemyId))
-				game.endFight()
+				bFightEnded = true
 			elseif (playerCards.score > enemyCards.score) then
 				table.insert(enemyCards, drawCard())
 			else -- it's a draw

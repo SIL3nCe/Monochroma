@@ -40,3 +40,6 @@ luac.out
 *.hex
 
 External/*
+Unity/Library/*
+Unity/Packages/*
+Unity/Logs/*

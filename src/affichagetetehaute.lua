@@ -25,7 +25,8 @@ end
 function hud.draw()	
 	for i = 1, player.baseLife do
 		local sprite = player.life >= i and heartFull or heartEmpty
-		spriteManager.draw(sprite, true, 1, dungeon.getCellCoord(heartX, heartY + i))
+		local alpha = player.life == i and playerSpriteAlpha or 1
+		spriteManager.draw(sprite, true, alpha, dungeon.getCellCoord(heartX, heartY + i))
 	end
 	
 	spriteManager.draw(goldSprite, true, 1, dungeon.getCellCoord(goldX, goldY))
